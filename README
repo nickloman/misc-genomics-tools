@@ -1,2 +1,22 @@
 Some scripts for handling multiple VCF files
 
+run e.g.
+
+python ../scripts/index_multiple_vcf.py variant_files bcf_files results.pickle
+python ../scripts/tabulate_multiple_vcf.py results.pickle > results.fna
+
+Assumes there is a file called 'variant_files' which lists all the VCF files
+
+e.g.
+
+NC_002755_K7_ilmn_bwa.vcf
+NC_002755_K7_pgm.noindel.vcf
+NC_002755_K8_ilmn_bwa.vcf
+
+And a file called bcf_files which is a list of display identifiers and BCF files (tab-separated), e.g.
+
+K7_ilmn NC_002755_K7_ilmn_bwa.all.bcf.gz
+K7_pgm  NC_002755_K7_pgm.all.bcf.gz
+K8_ilmn NC_002755_K8_ilmn_bwa.all.bcf.gz
+
+
