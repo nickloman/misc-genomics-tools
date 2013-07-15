@@ -1,3 +1,6 @@
+### Ensure your SNP caller will produce het calls,e.g.
+### java -jar bin/VarScan.jar mpileup2snp --min-coverage 5 --min-var-freq 0.1 --p-value 0.005  --output-vcf
+
 import vcf
 import sys
 from collections import Counter, defaultdict
