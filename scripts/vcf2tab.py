@@ -40,6 +40,7 @@ for record in vcf_reader:
 	else:
 		result.extend([""] * 6)
 
+	results_index = len(result)
 
 	freq = 0
 	for sample in record.samples:
@@ -57,6 +58,11 @@ for record in vcf_reader:
 		##result.extend([sample.gt_bases])
 		##, sample.data.FREQ, sample.data.PVAL])
 		freq = max(freq, sample.data.FREQ)
+
+	if len(set(result[results_index:])) == 1:
+		result.append('N')
+	else:
+		result.append('Y')
 
 	result.append(freq)
 	
