@@ -31,8 +31,15 @@ def read_table(fn):
 
 def go(args, options):
 	metadata_columns, metadata = read_table(options.metadata)
-	fh_alleles = open("alleles.txt", "w")
-	fh_samples = open("samples.txt", "w")
+
+	if options.output_prefix:
+		prefix = options.output_prefix + '_'
+	else:
+		prefix = ''
+
+	fh_alleles = open("%salleles.txt" % (prefix,), "w")
+	fh_all_alleles = open("%sall_alleles.txt" % (prefix,), "w")
+	fh_samples = open("%ssamples.txt" % (prefix,), "w")
 
 	alleles = defaultdict(str)
 	nocalls = defaultdict(int)
@@ -52,13 +59,13 @@ def go(args, options):
 				nocalls_list.append([record.CHROM, record.POS, record.REF, record.ALT, sample.sample, sample.data.SDP])
 
 	ignore_samples = []
-	total_records = float(len(vcf_records))
-	for sample, num_nocalls in nocalls.iteritems():
-		perc = float(num_nocalls) / total_records * 100
-		if perc > options.percent_nocalls:
-			ignore_samples.append(sample)
-
-	print "Samples to ignore: %s" % (", ".join(ignore_samples))
+	if options.percent_nocalls:
+		total_records = float(len(vcf_records))
+		for sample, num_nocalls in nocalls.iteritems():
+			perc = float(num_nocalls) / total_records * 100
+			if perc > options.percent_nocalls:
+				print >>sys.stderr, "Ignore sample: %s (%d)" % (sample, perc)
+				ignore_samples.append(sample)
 
 	for record in vcf_records:
 		samples_to_use = [sample for sample in record.samples if sample.sample not in ignore_samples]
@@ -74,6 +81,9 @@ def go(args, options):
 
 		for sample in samples_to_use:
 			alleles[sample.sample] += sample.gt_bases.split("/")[0]
+
+	for sample, genotypes in alleles.iteritems():
+		print >>fh_all_alleles, ">%s\n%s" % (sample, genotypes)
 
 # unique allele number	
 	unique_alleles = set(alleles.values())
@@ -123,8 +133,10 @@ def main():
 					  help="output alleles file to ALLELESFILE (default: <vcffile>_alleles.txt")
         parser.add_option("-n", "--nocalls", dest="nocallsfile",
                                           help="output alleles file to NOCALLSFILE (default: <vcffile>_nocalls.txt")
-	parser.add_option("-p", "--percentage_nocalls", dest="percent_nocalls", type="float", default=0.0,
+	parser.add_option("-p", "--percentage_nocalls", dest="percent_nocalls", type="float", 
 					  help="do not include samples with greater than <percentnocall> no calls")
+	parser.add_option("-o", "--output_prefix", dest="output_prefix",
+					  help="output prefix")
 	parser.add_option("-v", "--verbose",
 					  action="store_true", dest="verbose")
 	parser.add_option("-q", "--quiet",
