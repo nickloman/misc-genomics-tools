@@ -85,16 +85,28 @@ def go(args, options):
 	for sample, genotypes in alleles.iteritems():
 		print >>fh_all_alleles, ">%s\n%s" % (sample, genotypes)
 
-# unique allele number	
-	unique_alleles = set(alleles.values())
-	allele_lookup = dict([(allele, n+1) for n, allele in enumerate(unique_alleles)])
-
+# unique allele number
+	if options.profile == 1:
+		unique_alleles = set(alleles.values())
+		allele_lookup = dict([(allele, n+1) for n, allele in enumerate(unique_alleles)])
+	
 # founder
-	allele_lookup = {}
-	for sample, genotype in alleles.iteritems():
-		if genotype not in allele_lookup:
-			allele_lookup[genotype] = sample
+	if options.profile == 2:
+		allele_lookup = {}
+		for sample, genotype in alleles.iteritems():
+			if genotype not in allele_lookup:
+				allele_lookup[genotype] = sample
 
+# most common
+	if options.profile == 3:
+		allele_lookup = {}
+		counted = defaultdict(int)
+		for k, allele in alleles.iteritems():
+			counted[allele] += 1
+		for n, k in enumerate(sorted(counted.iteritems(), key=operator.itemgetter(1), reverse=True)):
+			allele_lookup[k[0]] = str(n+1)
+
+	print fh_samples
 	print >>fh_samples, "Sample\tProfile\t",
 	print >>fh_samples, "\t".join(metadata_columns)
 	for sample, genotype in alleles.iteritems():
@@ -128,13 +140,15 @@ def main():
 	parser.add_option("-m", "--metadata", dest="metadata",
 					  help="load metadata from METADATA")
 	parser.add_option("-s", "--samples", dest="samplefile",
-					  help="output sample info to SAMPLEFILE (default: <vcffile>_samples.txt")
+					  help="output sample info to SAMPLEFILE (default: <prefix>_samples.txt")
 	parser.add_option("-a", "--alleles", dest="allelesfile",
-					  help="output alleles file to ALLELESFILE (default: <vcffile>_alleles.txt")
+					  help="output alleles file to ALLELESFILE (default: <prefix>_alleles.txt")
         parser.add_option("-n", "--nocalls", dest="nocallsfile",
-                                          help="output alleles file to NOCALLSFILE (default: <vcffile>_nocalls.txt")
+                                          help="output alleles file to NOCALLSFILE (default: <prefix>_nocalls.txt")
 	parser.add_option("-p", "--percentage_nocalls", dest="percent_nocalls", type="float", 
 					  help="do not include samples with greater than <percentnocall> no calls")
+	parser.add_option("-r", "--profile", dest="profile", type="int", default="1",
+					  help="choose how to name profiles 1 = unique id, 2 = founder, 3 = most common")
 	parser.add_option("-o", "--output_prefix", dest="output_prefix",
 					  help="output prefix")
 	parser.add_option("-v", "--verbose",
