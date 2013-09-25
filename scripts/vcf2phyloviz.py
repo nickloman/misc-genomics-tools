@@ -106,7 +106,6 @@ def go(args, options):
 		for n, k in enumerate(sorted(counted.iteritems(), key=operator.itemgetter(1), reverse=True)):
 			allele_lookup[k[0]] = str(n+1)
 
-	print fh_samples
 	print >>fh_samples, "Sample\tProfile\t",
 	print >>fh_samples, "\t".join(metadata_columns)
 	for sample, genotype in alleles.iteritems():
