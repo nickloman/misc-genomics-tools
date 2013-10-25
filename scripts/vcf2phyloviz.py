@@ -67,6 +67,7 @@ def go(args, options):
 				print >>sys.stderr, "Ignore sample: %s (%d)" % (sample, perc)
 				ignore_samples.append(sample)
 
+	ref = []
 	for record in vcf_records:
 		samples_to_use = [sample for sample in record.samples if sample.sample not in ignore_samples]
 		bases = [sample.gt_bases for sample in samples_to_use if sample.gt_bases is not None]
@@ -82,6 +83,9 @@ def go(args, options):
 		for sample in samples_to_use:
 			alleles[sample.sample] += sample.gt_bases.split("/")[0]
 
+		ref.append(record.REF)
+
+        print >>fh_all_alleles, ">ref\n%s" % ("".join(ref))
 	for sample, genotypes in alleles.iteritems():
 		print >>fh_all_alleles, ">%s\n%s" % (sample, genotypes)
 
