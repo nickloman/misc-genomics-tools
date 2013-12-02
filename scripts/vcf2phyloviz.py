@@ -83,6 +83,9 @@ def go(args, options):
 		for sample in samples_to_use:
 			alleles[sample.sample] += sample.gt_bases.split("/")[0]
 
+		if len(set(bases)) != 1:
+			print "%s\t%s" % (record.CHROM, record.POS)
+
 		ref.append(record.REF)
 
         print >>fh_all_alleles, ">ref\n%s" % ("".join(ref))
