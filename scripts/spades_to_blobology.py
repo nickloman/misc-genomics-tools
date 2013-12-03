@@ -3,6 +3,7 @@
 # usage:
 # python spades_to_blobology.py assembly1.fa assembly2.fa assembly3.fa > stats.txt
 # R script
+# library(ggplot2)
 # st<-read.table("stats.txt", header=TRUE)
 # ggplot(st, aes(y=Coverage, x=GC, size=Length)) + geom_point() + facet_wrap( ~ Sample )
 
