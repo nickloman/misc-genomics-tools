@@ -1,5 +1,7 @@
+# little script to generate output for blobology plots from Spades output
+# For more on Blobology see: http://www.frontiersin.org/Journal/10.3389/fgene.2013.00237/abstract
 # usage:
-# python spades_to_blobology.py assembly1 assembly2 assembly3 > stats.txt
+# python spades_to_blobology.py assembly1.fa assembly2.fa assembly3.fa > stats.txt
 # R script
 # st<-read.table("stats.txt", header=TRUE)
 # ggplot(st, aes(y=Coverage, x=GC, size=Length)) + geom_point() + facet_wrap( ~ Sample )
